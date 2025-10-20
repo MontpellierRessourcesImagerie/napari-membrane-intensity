@@ -1,0 +1,6 @@
+__pycache__
+*.pyc
+dist
+..gitignore.swp
+src/napari_unet.egg-info
+

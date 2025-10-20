@@ -1,0 +1,133 @@
+[project]
+name = "napari-intensity-in-membrane"
+dynamic = ["version"]
+description = "A Napari plugin allowing to segment, track and measure the intensity within the membranes of some cells over time."
+readme = "README.md"
+license = {file = "LICENSE"}
+authors = [
+  {name = "Clément H. BENEDETTI"},
+  {email = "clement.benedetti@mri.cnrs.fr"},
+]
+classifiers = [
+    "Development Status :: 2 - Pre-Alpha",
+    "Framework :: napari",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Image Processing",
+]
+requires-python = ">=3.10"
+dependencies = [
+    "numpy",
+    "scikit-image",
+    "scipy",
+    "pint",
+    "tifffile",
+    "cellpose==3.1.1",
+    "matplotlib",
+    "opencv-python-headless",
+    "termcolor"
+]
+
+# Required for documentation: tabs, sphinx_sphinx, myst_parser, sphinx_rtd_theme
+
+[project.optional-dependencies]
+testing = [
+    "tox",
+    "pytest",
+    "pytest-cov",
+    "pytest-qt",
+    "pyqt5",
+    "numpy",
+    "qtpy",
+    "sphinx_rtd_theme",
+    "myst_parser",
+    "sphinx_tabs"
+]
+
+and-napari = [
+    "napari[all]"
+]
+
+[project.entry-points."napari.manifest"]
+intensity-in-membrane = "intensity_in_membrane:napari.yaml"
+
+[project.urls]
+"Bug Tracker" = "https://github.com/MontpellierRessourcesImagerie/intensity-in-membrane/issues"
+"Documentation" = "https://github.com/MontpellierRessourcesImagerie/intensity-in-membrane#README.md"
+"Source Code" = "https://github.com/MontpellierRessourcesImagerie/intensity-in-membrane"
+"User Support" = "https://github.com/MontpellierRessourcesImagerie/intensity-in-membrane/issues"
+
+[build-system]
+requires = ["setuptools>=42.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+"*" = ["*.yaml"]
+
+
+[tool.setuptools.dynamic]
+version = {attr = "intensity_in_membrane.__init__.__version__"}
+
+[tool.black]
+line-length = 79
+target-version = ['py38', 'py39', 'py310']
+
+[tool.ruff]
+line-length = 79
+lint.select = [
+    "E", "F", "W", #flake8
+    "UP", # pyupgrade
+    "I", # isort
+    "BLE", # flake8-blind-exception
+    "B", # flake8-bugbear
+    "A", # flake8-builtins
+    "C4", # flake8-comprehensions
+    "ISC", # flake8-implicit-str-concat
+    "G", # flake8-logging-format
+    "PIE", # flake8-pie
+    "SIM", # flake8-simplify
+]
+lint.ignore = [
+    "E501", # line too long. let black handle this
+    "UP006", "UP007", # type annotation. As using magicgui require runtime type annotation then we disable this.
+    "SIM117", # flake8-simplify - some of merged with statements are not looking great with black, reanble after drop python 3.9
+]
+
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".mypy_cache",
+    ".pants.d",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+    "*vendored*",
+    "*_vendor*",
+]
+
+target-version = "py38"
+fix = true
