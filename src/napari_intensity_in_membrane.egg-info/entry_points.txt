@@ -1,2 +1,2 @@
 [napari.manifest]
-intensity-in-membrane = intensity_in_membrane:napari.yaml
+napari-intensity-in-membrane = napari_intensity_in_membrane:napari.yaml

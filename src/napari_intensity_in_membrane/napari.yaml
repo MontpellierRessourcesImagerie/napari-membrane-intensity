@@ -1,0 +1,14 @@
+name: napari-intensity-in-membrane
+display_name: Intensity in membrane
+# use 'hidden' to remove plugin from napari hub search results
+visibility: public
+# see https://napari.org/stable/plugins/manifest.html for valid categories
+categories: ["Annotation", "Segmentation", "Acquisition"]
+contributions:
+  commands:
+    - id: napari-intensity-in-membrane.napari_intensity_in_membrane
+      python_name: napari_intensity_in_membrane._widget:IntensitiesInMembraneWidget
+      title: Intensity in membrane
+  widgets:
+    - command: napari-intensity-in-membrane.napari_intensity_in_membrane
+      display_name: Intensity in membrane

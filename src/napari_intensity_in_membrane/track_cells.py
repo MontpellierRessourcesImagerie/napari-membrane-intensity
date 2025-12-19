@@ -133,6 +133,10 @@ class TrackCellsWorker(object):
         self.linked["particle"] = self.linked["particle"].astype(int) + 1
 
     def relabel_with_tracks(self):
+        if self.linked is None:
+            raise ValueError("No linked tracks to relabel.")
+        if self.label_maps is None:
+            raise ValueError("Label maps have not been set.")
         out = [np.zeros_like(self.label_maps[t], dtype=np.uint16) for t in range(len(self.label_maps))]
         for t, g in self.linked.groupby("frame"):
             lab = self.label_maps[t]

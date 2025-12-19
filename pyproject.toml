@@ -57,7 +57,7 @@ and-napari = [
 ]
 
 [project.entry-points."napari.manifest"]
-intensity-in-membrane = "intensity_in_membrane:napari.yaml"
+napari-intensity-in-membrane = "napari_intensity_in_membrane:napari.yaml"
 
 [project.urls]
 "Bug Tracker" = "https://github.com/MontpellierRessourcesImagerie/intensity-in-membrane/issues"
@@ -80,7 +80,7 @@ where = ["src"]
 
 
 [tool.setuptools.dynamic]
-version = {attr = "intensity_in_membrane.__init__.__version__"}
+version = {attr = "napari_intensity_in_membrane.__init__.__version__"}
 
 [tool.black]
 line-length = 79

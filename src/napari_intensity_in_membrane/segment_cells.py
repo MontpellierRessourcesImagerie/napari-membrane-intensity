@@ -4,6 +4,7 @@ import tifffile
 from pathlib import Path
 from termcolor import cprint
 import numpy as np
+import os
 
 class SegmentCellsWorker(object):
    
@@ -15,7 +16,7 @@ class SegmentCellsWorker(object):
         # Image to be segmented
         self.segmentation_channel = None
         # Median diameter of objects to segment
-        self.objs_diameter = 60
+        self.objs_diameter = 30
         # Anisotropy between the Z and the YX axes for 3D.
         self.anisotropy = 1.0
         # Name of the model to use
@@ -27,11 +28,7 @@ class SegmentCellsWorker(object):
         return self.use_gpu
 
     def set_gpu(self, gpu):
-        if gpu and core.use_gpu():
-            self.use_gpu = True
-        else:
-            self.use_gpu = False
-            print("GPU not available")
+        self.use_gpu = gpu and core.use_gpu()
 
     def get_axes(self):
         return self.axes
@@ -74,6 +71,8 @@ class SegmentCellsWorker(object):
     
     def set_model_name(self, name):
         self.model_name = name
+        if name.startswith("CP_"):
+            self.model_name = os.path.join(os.path.dirname(__file__), 'models', name)
 
     def check_axes(self, axes):
         ordered = ['T', 'Z', 'Y', 'X']

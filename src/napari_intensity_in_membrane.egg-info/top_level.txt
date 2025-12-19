@@ -1,1 +1,1 @@
-intensity_in_membrane
+napari_intensity_in_membrane

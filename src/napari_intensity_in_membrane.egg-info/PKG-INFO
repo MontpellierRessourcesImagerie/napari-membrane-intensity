@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: napari-intensity-in-membrane
-Version: 1.0.0
+Version: 1.1.0
 Summary: A Napari plugin allowing to segment, track and measure the intensity within the membranes of some cells over time.
 Author: Clément H. BENEDETTI
 Author-email: clement.benedetti@mri.cnrs.fr
@@ -55,6 +55,7 @@ Requires-Dist: tifffile
 Requires-Dist: cellpose==3.1.1
 Requires-Dist: matplotlib
 Requires-Dist: opencv-python-headless
+Requires-Dist: termcolor
 Provides-Extra: testing
 Requires-Dist: tox; extra == "testing"
 Requires-Dist: pytest; extra == "testing"
