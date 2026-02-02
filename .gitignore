@@ -3,4 +3,4 @@ __pycache__
 dist
 ..gitignore.swp
 src/napari_unet.egg-info
-
+src/napari_intensity_in_membrane/models
