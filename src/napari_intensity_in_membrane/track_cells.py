@@ -157,84 +157,6 @@ class TrackCellsWorker(object):
             raise ValueError("The output path is not valid.")
         self.linked.to_csv(path, index=False)
 
-    def make_pairs(self):
-        if self.linked is None:
-            raise ValueError("No linked tracks to process.")
-        self.pairs = {}
-        if self.axes[0] != 'T':
-            return
-
-        last_frame_idx = self.label_maps.shape[0] - 1
-        last = self.linked[self.linked["frame"] == last_frame_idx]
-        if last.empty:
-            return
-
-        pts = last.drop_duplicates(subset=["particle"])[["particle", "x", "y", "diameter"]]
-        particles = pts["particle"].astype(int).to_numpy()
-        coords = pts[["x", "y"]].to_numpy()
-        diams = pts["diameter"].to_numpy()
-
-        # build adjacency sets for pairs that satisfy distance criterion
-        adj = {int(p): set() for p in particles}
-        n = len(particles)
-        for i in range(n):
-            for j in range(i + 1, n):
-                pi = int(particles[i])
-                pj = int(particles[j])
-                xi, yi = coords[i]
-                xj, yj = coords[j]
-                dist = np.hypot(xi - xj, yi - yj)
-                if dist < 1.5 * (diams[i] + diams[j]):
-                    adj[pi].add(pj)
-                    adj[pj].add(pi)
-
-        # keep only isolated pairs (components of size 2 where both have degree 1)
-        visited = set()
-        valid_pairs = {}
-        for p in list(adj.keys()):
-            if p in visited:
-                continue
-            # explore connected component
-            stack = [p]
-            comp = set()
-            while stack:
-                q = stack.pop()
-                if q in comp:
-                    continue
-                comp.add(q)
-                for nb in adj[q]:
-                    if nb not in comp:
-                        stack.append(nb)
-            visited.update(comp)
-
-            if len(comp) == 2:
-                a, b = tuple(comp)
-                if len(adj[a]) == 1 and len(adj[b]) == 1:
-                    valid_pairs[int(a)] = int(b)
-                    valid_pairs[int(b)] = int(a)
-
-        self.pairs = valid_pairs
-
-    def apply_pairing(self):
-        if self.linked is None:
-            raise ValueError("No linked tracks to process.")
-        if not self.pairs:
-            return
-
-        pair_map = {}
-        new_particle_id = self.linked["particle"].max() + 1
-
-        for p1, p2 in self.pairs.items():
-            if p1 in pair_map or p2 in pair_map:
-                continue
-            pair_map[p1] = new_particle_id
-            pair_map[p2] = new_particle_id
-            new_particle_id += 1
-
-        self.linked["particle"] = self.linked["particle"].apply(
-            lambda x: pair_map[x] if x in pair_map else x
-        )
-
     def isolate_full_tracks(self): # labels present on the last frame
         if self.linked is None:
             raise ValueError("No linked tracks to process.")
@@ -250,9 +172,6 @@ class TrackCellsWorker(object):
         self.link_tracks()
         if self.remove_incomplete:
             self.isolate_full_tracks()
-        if self.merge_neighbors:
-            self.make_pairs()
-            self.apply_pairing()
         
         self.relabel_with_tracks()
 

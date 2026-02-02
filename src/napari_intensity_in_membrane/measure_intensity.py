@@ -1,8 +1,10 @@
 from pathlib import Path
 import tifffile
 import numpy as np
-from scipy.ndimage import binary_erosion
+from scipy.ndimage import (binary_erosion, gaussian_filter, 
+                           binary_opening, binary_dilation)
 from skimage.measure import regionprops
+from skimage.morphology import diamond, disk
 from napari_intensity_in_membrane.utils import get_integrated_intensity
 
 class MeasureMembraneIntensity:
@@ -11,21 +13,26 @@ class MeasureMembraneIntensity:
         self.axes = 'TYX'
         self.intensity_channel = None
         self.membrane_thickness = 4
-        self.factor = 2.0
         self.rings = None
         self.inner = None
         self.results = None
+        self.discarded_mask = None
+
+    def get_discarded_mask(self):
+        return self.discarded_mask
+    
+    def set_discarded_mask(self, mask):
+        if mask.ndim != len(self.axes):
+            raise ValueError("The candidate discarded mask is not compatible with the current axes.")
+        self.discarded_mask = mask
+
+    def override_discarded_mask(self, mask, axes):
+        self.discarded_mask = None
+        self.set_axes(axes)
+        self.set_discarded_mask(mask)
 
     def get_results(self):
         return self.results
-
-    def get_factor(self):
-        return self.factor
-    
-    def set_factor(self, factor):
-        if factor <= 1e-3:
-            raise ValueError("The factor cannot be negative or zero")
-        self.factor = factor
 
     def get_label_maps(self):
         return self.label_maps
@@ -98,27 +105,13 @@ class MeasureMembraneIntensity:
                 buffer_rings[t] = buffer_rings[t] | rings
         return buffer_rings, buffer_inner
     
-    def remove_outlier_intensities(self):
-        if self.intensity_channel is None:
-            raise ValueError("Intensity channel has not been set.")
-        mask = np.zeros_like(self.intensity_channel, dtype=bool)
-        for t in range(len(self.intensity_channel)):
-            intensities = self.intensity_channel[t]
-            labels = self.label_maps[t]
-            # List of values in the intensity channel where labels > 0
-            values = intensities[labels > 0]
-            stddev = np.std(values)
-            mean = np.mean(values)
-            print(f"F{t+1}: mean={mean:.2f}, stddev={stddev:.2f}")
-            too_bright = mean + self.factor * stddev
-            mask[t] = intensities < too_bright
-        return mask
-    
     def measure_intensities(self):
         if self.rings is None:
             raise ValueError("Outlines have not been computed.")
         if self.inner is None:
             raise ValueError("Inner labels have not been computed.")
+        if self.intensity_channel is None:
+            raise ValueError("Intensity channel has not been set.")
         # For each label from each time point, measures the mean intensity, the area, and the sum of intensities.
         results = []
         for t in range(len(self.rings)):
@@ -147,7 +140,8 @@ class MeasureMembraneIntensity:
                 area_inner = prop.area
                 mean_ring, integrated_ring, area_ring = results_t[int(lbl)]
                 results_t[int(lbl)] = (mean_ring, integrated_ring, area_ring, mean_inner, integrated_inner, area_inner)
-            results.append(results_t)
+            filtered = {k: v for k, v in results_t.items() if len(v) == 6}
+            results.append(filtered)
         self.results = results
     
     def run(self):
@@ -155,31 +149,11 @@ class MeasureMembraneIntensity:
             raise ValueError("Label maps have not been set.")
         if self.intensity_channel is None:
             raise ValueError("Intensity channel has not been set.")
-        discard_mask = self.remove_outlier_intensities()
+        if self.discarded_mask is None:
+            raise ValueError("Outlier intensity mask has not been computed.")
         outlines, inner = self.labels_to_outlines()
-        outlines = outlines * discard_mask
-        inner = inner * discard_mask
+        outlines = outlines * (1 - self.discarded_mask)
+        inner = inner * (1 - self.discarded_mask)
         self.rings = outlines
         self.inner = inner
         self.measure_intensities()
-        
-if __name__ == "__main__":
-    path = "/home/clement/Desktop/pos2 t4_TL-labeled.tif"
-    label_maps = tifffile.imread(path)
-
-    buffer_rings = np.zeros_like(label_maps)
-    buffer_inner = np.zeros_like(label_maps)
-    for t in range(len(label_maps)):
-        print(f"Measuring frame: {t+1}")
-        unique_vals = np.unique(label_maps[t])
-        for value in unique_vals:
-            if value == 0:
-                continue
-            mask = (label_maps[t] == value).astype(np.uint8)
-            eroded = binary_erosion(mask, iterations=5)
-            rings = (mask - eroded) * value
-            inner = eroded * value
-            buffer_inner[t] = buffer_inner[t] | inner
-            buffer_rings[t] = buffer_rings[t] | rings
-    tifffile.imwrite("/home/clement/Desktop/pos2 t4_TL-rings.tif", buffer_rings.astype('uint16'))
-    tifffile.imwrite("/home/clement/Desktop/pos2 t4_TL-inner.tif", buffer_inner.astype('uint16'))

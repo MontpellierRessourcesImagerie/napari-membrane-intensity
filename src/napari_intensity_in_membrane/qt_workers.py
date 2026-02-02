@@ -28,6 +28,19 @@ class QtTrackCells(QObject):
         self.finished.emit()
 
 
+class QtRemoveOutlierIntensities(QObject):
+
+    finished = pyqtSignal()
+
+    def __init__(self, roi):
+        super().__init__()
+        self.roi = roi
+
+    def run(self):
+        self.roi.run()
+        self.finished.emit()
+
+
 class QtMeasureMembranes(QObject):
 
     finished = pyqtSignal()
