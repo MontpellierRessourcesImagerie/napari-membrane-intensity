@@ -1,11 +1,8 @@
-from pathlib import Path
-import tifffile
 import numpy as np
-from scipy.ndimage import (binary_erosion, gaussian_filter, 
-                           binary_opening, binary_dilation)
+from scipy.ndimage import binary_erosion
 from skimage.measure import regionprops
-from skimage.morphology import diamond, disk
 from napari_intensity_in_membrane.utils import get_integrated_intensity
+
 
 class MeasureMembraneIntensity:
     def __init__(self):
@@ -126,7 +123,7 @@ class MeasureMembraneIntensity:
                 if int(lbl) == 0:
                     continue
                 mean_ring = prop.mean_intensity
-                integrated_ring = get_integrated_intensity(prop.intensity_image, prop.image)
+                integrated_ring = get_integrated_intensity(prop.image_intensity, prop.image)
                 area_ring = prop.area
                 results_t[int(lbl)] = (mean_ring, integrated_ring, area_ring)
             for prop in measures_inner:
@@ -136,7 +133,7 @@ class MeasureMembraneIntensity:
                 if lbl not in results_t:
                     continue
                 mean_inner = prop.mean_intensity
-                integrated_inner = get_integrated_intensity(prop.intensity_image, prop.image)
+                integrated_inner = get_integrated_intensity(prop.image_intensity, prop.image)
                 area_inner = prop.area
                 mean_ring, integrated_ring, area_ring = results_t[int(lbl)]
                 results_t[int(lbl)] = (mean_ring, integrated_ring, area_ring, mean_inner, integrated_inner, area_inner)

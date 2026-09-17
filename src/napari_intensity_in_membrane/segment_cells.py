@@ -1,10 +1,14 @@
-from cellpose import models, core
-from cellpose.io import logger_setup
 import tifffile
 from pathlib import Path
-from termcolor import cprint
-import numpy as np
 import os
+import numpy as np
+from cellpose.io import logger_setup
+from termcolor import cprint
+from cellpose import (
+    models, 
+    core
+)
+
 
 class SegmentCellsWorker(object):
    

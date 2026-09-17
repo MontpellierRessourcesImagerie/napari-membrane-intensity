@@ -1,9 +1,18 @@
-from qtpy.QtWidgets import (QWidget, QVBoxLayout, QPushButton, QApplication, QMainWindow,
-                            QTableWidget, QTableWidgetItem, QFileDialog)
-from PyQt5.QtGui import QColor, QFont
-import numpy as np
+from qtpy.QtWidgets import (
+    QWidget,
+    QVBoxLayout,
+    QPushButton,
+    QMainWindow,
+    QTableWidget,
+    QTableWidgetItem,
+    QFileDialog
+)
+from qtpy.QtGui import (
+    QColor, 
+    QFont
+)
 import csv
-import math
+
 
 class ResultsTable(QMainWindow):
     def __init__(self, data, name='Data Table', parent=None):

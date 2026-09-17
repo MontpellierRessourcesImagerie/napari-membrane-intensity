@@ -1,11 +1,11 @@
-from pathlib import Path
-import tifffile
 import numpy as np
-from scipy.ndimage import (binary_erosion, gaussian_filter, 
-                           binary_opening, binary_dilation)
 from skimage.measure import regionprops
-from skimage.morphology import diamond, disk
-from napari_intensity_in_membrane.utils import get_integrated_intensity
+from skimage.morphology import diamond
+from scipy.ndimage import (
+    binary_opening, 
+    binary_dilation
+)
+
 
 class RemoveOutlierIntensities:
     def __init__(self):

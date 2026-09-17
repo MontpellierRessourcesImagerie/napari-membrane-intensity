@@ -1,6 +1,5 @@
 import numpy as np
-import tifffile
-import random
+
 
 def keep_labels(data, points):
     labels_list = list(set([data[p[0], p[1], p[2]] for p in points.astype(np.uint16)]))

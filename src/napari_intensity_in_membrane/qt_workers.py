@@ -1,10 +1,9 @@
-from qtpy.QtCore import QObject
-from PyQt5.QtCore import pyqtSignal, pyqtSlot
-import numpy as np
+from qtpy.QtCore import QObject, Signal
+
 
 class QtSegmentCells(QObject):
     
-    finished = pyqtSignal()
+    finished = Signal()
 
     def __init__(self, scw):
         super().__init__()
@@ -17,7 +16,7 @@ class QtSegmentCells(QObject):
 
 class QtTrackCells(QObject):
 
-    finished = pyqtSignal()
+    finished = Signal()
 
     def __init__(self, tcw):
         super().__init__()
@@ -30,7 +29,7 @@ class QtTrackCells(QObject):
 
 class QtRemoveOutlierIntensities(QObject):
 
-    finished = pyqtSignal()
+    finished = Signal()
 
     def __init__(self, roi):
         super().__init__()
@@ -43,7 +42,7 @@ class QtRemoveOutlierIntensities(QObject):
 
 class QtMeasureMembranes(QObject):
 
-    finished = pyqtSignal()
+    finished = Signal()
 
     def __init__(self, miw):
         super().__init__()

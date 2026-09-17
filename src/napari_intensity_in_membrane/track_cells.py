@@ -6,6 +6,7 @@ from skimage.measure import regionprops
 from skimage.segmentation import clear_border
 import trackpy as tp
 
+
 class TrackCellsWorker(object):
     def __init__(self):
         # List of label maps, one per frame

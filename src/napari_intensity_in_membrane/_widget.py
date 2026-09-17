@@ -1,26 +1,34 @@
 import os
-from qtpy.QtWidgets import (QWidget, QVBoxLayout, QSpinBox,
-                            QGroupBox, QHBoxLayout, QLabel, 
-                            QComboBox, QCheckBox, QLineEdit, 
-                            QPushButton, QFileDialog, QDoubleSpinBox
+from qtpy.QtWidgets import (
+    QWidget, 
+    QVBoxLayout, 
+    QSpinBox,
+    QGroupBox, 
+    QHBoxLayout, 
+    QLabel, 
+    QComboBox,
+    QPushButton, 
+    QFileDialog, 
+    QDoubleSpinBox
 )
-from qtpy.QtCore import Qt, QThread
+from qtpy.QtCore import QThread
 
 import napari
-from napari.utils import progress
-
 import tifffile
-import numpy as np
 
-from napari.layers import Points, Shapes, Labels, Image
+from napari.layers import Points, Shapes, Image
 from napari_intensity_in_membrane.segment_cells import SegmentCellsWorker
 from napari_intensity_in_membrane.track_cells import TrackCellsWorker
 from napari_intensity_in_membrane.measure_intensity import MeasureMembraneIntensity
 from napari_intensity_in_membrane.remove_outliers import RemoveOutlierIntensities
-from napari_intensity_in_membrane.qt_workers import (QtSegmentCells, QtTrackCells, 
-                                                     QtMeasureMembranes, QtRemoveOutlierIntensities)
 from napari_intensity_in_membrane.results_table import FrameWiseResultsTable
 from napari_intensity_in_membrane.utils import keep_labels, merge_labels
+from napari_intensity_in_membrane.qt_workers import (
+    QtSegmentCells, 
+    QtTrackCells, 
+    QtMeasureMembranes, 
+    QtRemoveOutlierIntensities
+)
 
 NEUTRAL             = "--------"
 SEGMENTATION_SUFFIX = "-labeled"
