@@ -5,6 +5,8 @@
 - The membranes are isolated and local maxima are excluded before measurements.
 - **Limitation:** This plugin was developed for 2D+t images; it does not work for 3D.
 
+<img width="398" height="337" alt="image" src="https://github.com/user-attachments/assets/778b0835-713f-4334-89a6-c249f24428d0" />
+
 ## How to use it?
 
 ### 1. Setup
